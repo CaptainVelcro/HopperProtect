@@ -1,0 +1,13 @@
+main: me.CaptainVelcro.ActualPlugin.Main
+name: TheftBEGONE
+version: 1.0
+author: CaptainVelcro
+
+commands:
+  Lock:
+  Unlock:
+  Databaseadd:
+   aliases: dbadd
+  upData:
+  databaseview:
+   aliases: dtbv
