@@ -1,2 +1,2 @@
-# theftBEGONE-Plugin
-theftBEGONE it's simple.
+# HopperProtect
+Protecting hoppers it's simple.
