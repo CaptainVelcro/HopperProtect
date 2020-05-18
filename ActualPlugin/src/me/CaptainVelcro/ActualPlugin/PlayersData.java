@@ -14,7 +14,14 @@ public class PlayersData {
 	
 	}
 
-
+	public void removeVector(Vector vector) {
+		for(int i = vectors.size()-1; i>=0; i--) {
+			if(vectors.get(i).equals(vector)) {
+				vectors.remove(i);
+				return;
+			}
+		}
+	}
 	public UUID getUUID() {
 		return uuid;
 	}

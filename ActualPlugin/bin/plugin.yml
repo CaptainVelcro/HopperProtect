@@ -2,7 +2,7 @@ main: me.CaptainVelcro.ActualPlugin.Main
 name: TheftBEGONE
 version: 1.0
 author: CaptainVelcro
-
+api-version: 1.13
 commands:
   Lock:
   Unlock:

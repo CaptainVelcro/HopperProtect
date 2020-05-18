@@ -1,89 +1,118 @@
 package me.CaptainVelcro.ActualPlugin;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import net.coreprotect.CoreProtectAPI;
 
 public class Events implements Listener {
 	private CoreProtectAPI api;
+	private PlayersDatabase database;
 
-	public Events(CoreProtectAPI x) {
+	public Events(CoreProtectAPI x, PlayersDatabase database) {
 		api = x;
+		this.database = database;
+		Gson lol = new GsonBuilder().setPrettyPrinting().create();
+		System.out.println(lol.toJson(database));
 	}
 
-	private boolean hopPlaced = false;
-	private boolean hopPlacedM = false;
 	private Player player = null;
-	private boolean reported = false;
+	private Location hopperPlacerLoc;
+	private Location hopperMPlacerLoc;
+	private boolean isahopper = false;
+	private boolean isaminecartHopper = false;
 
-	@EventHandler
-	public void onevent(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-
-		Block block = event.getBlock();// looking for hopper placement
-		Material material = block.getType();
-		// test to see if its a chest above so it doesnt always activate.
-		Location temp = block.getLocation();// see if hopper is attaching to a chest
-		temp.setY(temp.getY() + 1.0);
-		Block ischest = temp.getBlock();
-		Material fi = ischest.getType();// block above it
-
-		Material bl = player.getInventory().getItemInMainHand().getType();// check to see if it is a hopper in their
-																			// hand
-
-		if (fi.equals(Material.CHEST) && material.equals(Material.HOPPER)) {
-
-			player.sendMessage("hopper detected");
-			hopPlaced = true;
-			this.player = player;
-			reported = false;
+	public int findPlayer(UUID x) {
+		for (int i = 0; i < database.getPlayerData().size(); i++) {
+			if (database.getPlayerData().get(i).getUUID().equals(x)) {
+				return i;
+			}
 		}
-		if (bl.equals(Material.HOPPER_MINECART)) {
-			hopPlacedM = true;
-			reported = false;
-			player.sendMessage("hopper detected");
-
-		}
+		return -1;
 	}
 
-	@EventHandler
-	public void playerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
+	public boolean vectorLocked(Vector x) {
+		if (database != null) {
+			for (int i = 0; i < database.getPlayerData().size(); i++) {
+				for (int j = 0; j < database.getPlayerData().get(i).getVectors().size(); j++) {
+					if (database.getPlayerData().get(i).getVectors().get(j).equals(x)) {
 
-		if (event.getAction().equals(event.getAction().RIGHT_CLICK_BLOCK)
-				&& player.getInventory().getItemInMainHand().equals(Material.HOPPER_MINECART)) {
-			player.sendMessage("NO");
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	@EventHandler
+	public void onevent(BlockPlaceEvent event) {//does not work
+		player = event.getPlayer();
+		int playIndex = findPlayer(player.getUniqueId());
+		Block firstx = event.getBlock();// looking for hopper placement
+		
+		if (firstx.getState() instanceof Chest) {
+			
+			Inventory inv = ((Chest) firstx.getState()).getInventory();
+			if (inv instanceof DoubleChestInventory) {
+				System.out.println("f");
+				DoubleChestInventory doubleChestInv = (DoubleChestInventory) inv;
+				if(vectorLocked(doubleChestInv.getRightSide().getLocation().toVector()) == true) {//find which side is locked
+					database.getPlayerData().get(playIndex).addVector(doubleChestInv.getLeftSide().getLocation());	
+					System.out.println("?");
+				}else {
+					database.getPlayerData().get(playIndex).addVector(doubleChestInv.getRightSide().getLocation());
+					System.out.println("x");
+				}
+
+			}	
+		}
+	}
+	@EventHandler
+	public void onblockBreak(BlockBreakEvent event) {//does nto work
+		Block temp = event.getBlock();
+		Inventory inv = ((Chest) temp.getState()).getInventory();
+		int playIndex = findPlayer(player.getUniqueId());
+		if(inv instanceof Chest) {
+			if(inv instanceof DoubleChestInventory) {
+				DoubleChestInventory doubleChestInv = (DoubleChestInventory) inv;
+				database.getPlayerData().get(playIndex).removeVector(doubleChestInv.getLeftSide().getLocation().toVector());
+				database.getPlayerData().get(playIndex).removeVector(doubleChestInv.getRightSide().getLocation().toVector());	
+			}else {
+				//single chest
+				database.getPlayerData().get(playIndex).removeVector(temp.getLocation().toVector());	
+			}
 		}
 	}
 
 	@EventHandler
 	public void onInventoryMove(InventoryMoveItemEvent event) {
-		event.setCancelled(true);
-		if (hopPlaced == true && reported == false) {
-			api.logContainerTransaction(player.getDisplayName(), player.getLocation());
-			api.logInteraction(player.getDisplayName(), player.getLocation());
-			reported = true;
-			hopPlaced = false;
+		Location temp = event.getSource().getLocation();
+		if (vectorLocked(temp.toVector()) == true) {
+			event.setCancelled(true);
 		}
-		if (hopPlacedM == true && reported == false) {
-			api.logContainerTransaction(player.getDisplayName(), player.getLocation());
-			api.logInteraction(player.getDisplayName(), player.getLocation());
-			reported = true;
-			hopPlacedM = false;
-		}
-
 	}
+
 }
