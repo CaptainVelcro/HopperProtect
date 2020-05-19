@@ -1,0 +1,35 @@
+plugins {
+	id "java-library"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+group = project.groupId
+archivesBaseName = project.artifactId
+version = project.pluginVersion
+
+repositories {
+	maven {
+		url "https://hub.spigotmc.org/nexus/content/repositories/public/"
+	}
+}
+
+dependencies {
+	compileOnly "org.spigotmc:spigot-api:${project.spigotApiVersion}"
+}
+
+processResources {
+	expand project.properties
+}
+
+task buildDev {
+	group "test"
+	description "Builds a dev version of the plugin into the plugins folder of the server."
+	
+	doLast {
+		project.version = "DEV"
+		project.libsDirName = project.pluginFolderPath
+	}
+}
+buildDev.finalizedBy(build)

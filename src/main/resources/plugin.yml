@@ -1,0 +1,11 @@
+main: ${project.group}.hopperprotect.HopperProtect
+name: HopperProtect
+version: ${project.version}
+
+description: Protect inventories from hopper extraction!
+api-version: 1.15
+authors: [CaptainVelcro, Pepper_Bell]
+
+commands:
+  lock:
+    description: Lock or unlock any container so hoppers can't extract from it
