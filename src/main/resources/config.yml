@@ -1,0 +1,5 @@
+# HopperProtect Config
+
+# Adds tabs and newlines to make the json file readable but larger.
+# Goes into effect next time the plugin is reloaded.
+json-pretty-printing: false

@@ -2,10 +2,37 @@ main: ${project.group}.hopperprotect.HopperProtect
 name: HopperProtect
 version: ${project.version}
 
-description: Protect inventories from hopper extraction!
+description: Protect inventories from hopper extraction.
 api-version: 1.15
-authors: [CaptainVelcro, Pepper_Bell]
+authors: [CaptainVelcro, PepperBell]
 
 commands:
   lock:
-    description: Lock or unlock any container so hoppers can't extract from it
+    description: Lock or unlock the inventory you are looking at so hoppers can't extract from it.
+    permission: hopperprotect.lock
+    permission-message: §3HopperProtect§r - You do not have permission to do that.
+    usage: /<command>
+  lockinfo:
+    description: Check if the inventory you are looking at is locked.
+    permission: hopperprotect.lock
+    permission-message: §3HopperProtect§r - You do not have permission to do that.
+    usage: /<command>
+
+permissions:
+  hopperprotect.*:
+    description: Gives access to all HopperProtect actions and commands.
+    default: op
+    children:
+      hopperprotect.lock: true
+      hopperprotect.info-all: true
+      hopperprotect.unlock-all: true
+  
+  hopperprotect.lock:
+    description: Gives permission to lock and unlock inventories and check if an inventory is locked.
+    default: true
+  hopperprotect.info-all:
+    description: Gives permission to check who locked an inventory when using /lockinfo.
+    default: op
+  hopperprotect.unlock-all:
+    description: Gives permission to unlock any inventory when using /lock.
+    default: op

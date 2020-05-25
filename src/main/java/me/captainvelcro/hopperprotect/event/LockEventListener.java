@@ -10,17 +10,19 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.captainvelcro.hopperprotect.HopperProtect;
 import me.captainvelcro.hopperprotect.data.LockDatabase;
-import me.captainvelcro.hopperprotect.util.Util;
+import me.captainvelcro.hopperprotect.util.ChestUtil;
 
 public class LockEventListener implements Listener {
-	private Plugin plugin;
+	private HopperProtect plugin;
+	private LockDatabase database;
 	
-	public LockEventListener(Plugin plugin) {
+	public LockEventListener(HopperProtect plugin) {
 		this.plugin = plugin;
+		database = this.plugin.getDatabase();
 	}
 	
 	@EventHandler
@@ -29,11 +31,11 @@ public class LockEventListener implements Listener {
 			@Override
 			public void run() {
 				Block block = event.getBlock();
-				Block opposite = Util.oppositeChest(block);
+				Block opposite = ChestUtil.oppositeChest(block);
 				if (opposite != null) {
-					UUID who = LockDatabase.whoLocked(opposite.getLocation());
+					UUID who = database.whoLocked(opposite.getLocation());
 					if (who != null) {
-						LockDatabase.lock(block.getLocation(), who);
+						database.lock(block.getLocation(), who);
 					}
 				}
 			}
@@ -44,7 +46,7 @@ public class LockEventListener implements Listener {
 	
 	@EventHandler
 	public void blockBreak(BlockBreakEvent event) {
-		LockDatabase.unlock(event.getBlock().getLocation());
+		database.unlock(event.getBlock().getLocation());
 	}
 
 	@EventHandler
@@ -53,7 +55,7 @@ public class LockEventListener implements Listener {
 		if (source instanceof DoubleChestInventory) {
 			source = ((DoubleChestInventory) source).getLeftSide();
 		}
-		if (LockDatabase.isLocked(source.getLocation())) {
+		if (database.isLocked(source.getLocation())) {
 			event.setCancelled(true);
 		}
 	}

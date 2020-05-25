@@ -13,10 +13,21 @@ Users can lock any inventory so that hoppers and hopper minecarts can't extract 
 ### Extra Information
 
 - HopperProtect does not prevent locked inventories from being broken. CoreProtect will log all block breaks.
-- All placed inventories are unlocked by default.
+- All inventories are unlocked when placed.
 
 ### Other Features
 
 - Double chest locking and unlocking happens automatically. If one chest is locked/unlocked, the other one will be too.
 - If a locked inventory is broken and placed back in the same spot, it will not be locked.
-- More to come soon.
+
+### Commands
+
+- lock: Lock or unlock the inventory you are looking at so hoppers can't extract from it. permission: hopperprotect.lock
+- lockinfo: Check if the inventory you are looking at is locked. permission: hopperprotect.lock
+
+### Permissions
+
+- hopperprotect.*: Gives access to all HopperProtect actions and commands.
+- hopperprotect.lock: Gives permission to lock and unlock inventories and check if an inventory is locked.
+- hopperprotect.info-all: Gives permission to check who locked an inventory when using /lockinfo.
+- hopperprotect.unlock-all: Gives permission to unlock any inventory when using /lock. Users without this permission cannot unlock inventories locked by others.

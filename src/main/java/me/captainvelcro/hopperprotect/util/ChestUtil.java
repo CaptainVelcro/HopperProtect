@@ -7,7 +7,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 
-public class Util {
+public class ChestUtil {
 	public static Block oppositeChest(Block block) {
 		BlockState state = block.getState();
 		if (state instanceof Chest) {

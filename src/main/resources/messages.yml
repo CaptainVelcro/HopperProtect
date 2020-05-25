@@ -1,0 +1,16 @@
+prefix: "§3HopperProtect§r - "
+
+lock: Inventory locked.
+unlock: Inventory unlocked.
+
+locked: This inventory is locked.
+unlocked: This inventory is not locked.
+
+locked-by: This inventory was locked by §b%s§r.
+
+deny:
+  unlock: You do not have permission to unlock inventories locked by others.
+
+error:
+  console: Only players can use this command.
+  no-inventory: You are not looking at an inventory.

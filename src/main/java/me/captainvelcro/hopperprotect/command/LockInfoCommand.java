@@ -2,6 +2,7 @@ package me.captainvelcro.hopperprotect.command;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.command.Command;
@@ -12,14 +13,16 @@ import org.bukkit.entity.Player;
 import me.captainvelcro.hopperprotect.HopperProtect;
 import me.captainvelcro.hopperprotect.data.LockDatabase;
 import me.captainvelcro.hopperprotect.data.Messages;
-import me.captainvelcro.hopperprotect.util.ChestUtil;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
-public class LockCommand implements CommandExecutor {
+public class LockInfoCommand implements CommandExecutor {
 	private HopperProtect plugin;
 	private Messages messages;
 	private LockDatabase database;
 	
-	public LockCommand(HopperProtect plugin) {
+	public LockInfoCommand(HopperProtect plugin) {
 		this.plugin = plugin;
 		messages = this.plugin.getMessages();
 		database = this.plugin.getDatabase();
@@ -32,22 +35,19 @@ public class LockCommand implements CommandExecutor {
 			Block target = player.getTargetBlock(null, 5);
 			if (target.getState() instanceof Container) {
 				UUID who = database.whoLocked(target.getLocation());
-				if (who == null) {
-					database.lock(target.getLocation(), player.getUniqueId());
-					Block opposite = ChestUtil.oppositeChest(target);
-					if (opposite != null) {
-						database.lock(opposite.getLocation(), player.getUniqueId());
+				if (who != null) {
+					if (player.hasPermission("hopperprotect.info-all")) {
+						Player whoPlayer = Bukkit.getPlayer(who);
+						
+						TextComponent hoverPlayer = new TextComponent(whoPlayer.getDisplayName());
+						hoverPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(who.toString()).create()));
+						
+						messages.sendTo(sender, "locked-by", hoverPlayer);
+					} else {
+						messages.sendTo(sender, "locked");
 					}
-					messages.sendTo(sender, "lock");
-				} else if (who.equals(player.getUniqueId()) || player.hasPermission("hopperprotect.unlock-all")) {
-					database.unlock(target.getLocation());
-					Block opposite = ChestUtil.oppositeChest(target);
-					if (opposite != null) {
-						database.unlock(opposite.getLocation());
-					}
-					messages.sendTo(sender, "unlock");
 				} else {
-					messages.sendTo(sender, "deny.unlock");
+					messages.sendTo(sender, "unlocked");
 				}
 			} else {
 				messages.sendTo(sender, "error.no-inventory");
