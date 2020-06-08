@@ -1,3 +1,5 @@
+# ${project.archivesBaseName} Messages
+
 prefix: "§3HopperProtect§r - "
 
 lock: Inventory locked.

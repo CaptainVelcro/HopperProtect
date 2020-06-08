@@ -1,5 +1,7 @@
 package me.captainvelcro.hopperprotect;
 
+import java.io.File;
+
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,9 +44,14 @@ public class HopperProtect extends JavaPlugin {
 	private void initData() {
 		saveDefaultConfig();
 		
-		messages = new Messages(this, "messages.yml");
-		
 		String dataPath = getDataFolder().getPath();
+		
+		String messagesPath = dataPath+"\\messages.yml";
+		if (!new File(messagesPath).exists()) {
+			saveResource("messages.yml", false);
+		}
+		messages = new Messages(messagesPath);
+		
 		String databasePath = dataPath+"\\lock.json";
 		boolean prettyPrinting = getConfig().getBoolean("json-pretty-printing");
 		database = new LockDatabase(databasePath, prettyPrinting);

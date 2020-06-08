@@ -27,7 +27,7 @@ public class LockEventListener implements Listener {
 	
 	@EventHandler
 	public void blockPlace(BlockPlaceEvent event) {
-		BukkitRunnable runnable = new BukkitRunnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				Block block = event.getBlock();
@@ -39,9 +39,7 @@ public class LockEventListener implements Listener {
 					}
 				}
 			}
-		};
-		
-		runnable.runTaskLater(plugin, 1);
+		}.runTask(plugin);
 	}
 	
 	@EventHandler

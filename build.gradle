@@ -10,9 +10,7 @@ archivesBaseName = project.artifactId
 version = project.pluginVersion
 
 repositories {
-	maven {
-		url "https://hub.spigotmc.org/nexus/content/repositories/public/"
-	}
+	maven { url "https://hub.spigotmc.org/nexus/content/repositories/public/" }
 }
 
 dependencies {
@@ -20,16 +18,18 @@ dependencies {
 }
 
 processResources {
+	outputs.upToDateWhen { false }
 	expand project.properties
 }
 
 task buildDev {
-	group "test"
-	description "Builds a dev version of the plugin into the plugins folder of the server."
+	group = "test"
+	description = "Builds a dev version of the plugin into the plugins folder of the server."
 	
 	doLast {
 		project.version = "DEV"
 		project.libsDirName = project.pluginFolderPath
 	}
+	
+	finalizedBy(build)
 }
-buildDev.finalizedBy(build)
