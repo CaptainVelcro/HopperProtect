@@ -1,6 +1,6 @@
 # HopperProtect
 
-HopperProtect solves CoreProtect's biggest issue. It is recommended that HopperProtect is used with CoreProtect but since CoreProtect is not a dependency this is not required.
+HopperProtect solves CoreProtect's biggest issue. It is recommended that HopperProtect is used with CoreProtect but since CoreProtect is not a dependency this is not required. HopperProtect only works Spigot or other plugin APIs based on Spigot, such as Paper. It does not work with Bukkit.
 
 ## The Problem
 
