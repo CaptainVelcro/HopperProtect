@@ -46,13 +46,13 @@ public class HopperProtect extends JavaPlugin {
 		
 		String dataPath = getDataFolder().getPath();
 		
-		String messagesPath = dataPath+"\\messages.yml";
+		String messagesPath = dataPath + File.separator + "messages.yml";
 		if (!new File(messagesPath).exists()) {
 			saveResource("messages.yml", false);
 		}
 		messages = new Messages(messagesPath);
 		
-		String databasePath = dataPath+"\\lock.json";
+		String databasePath = dataPath+ File.separator + "lock.json";
 		boolean prettyPrinting = getConfig().getBoolean("json-pretty-printing");
 		database = new LockDatabase(databasePath, prettyPrinting);
 	}
